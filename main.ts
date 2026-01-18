@@ -415,12 +415,21 @@ async function renderChartistSvg(options: {
         setAttribute: (name: string, value: string) => void;
         insertBefore: (node: unknown, referenceNode: unknown) => void;
         firstChild: unknown;
+        outerHTML: string;
       } | null;
     } | null;
     createElementNS: (ns: string, tagName: string) => {
       setAttribute: (name: string, value: string) => void;
       textContent: string | null;
     };
+  };
+
+  type SvgElement = {
+    getAttribute: (name: string) => string | null;
+    setAttribute: (name: string, value: string) => void;
+    insertBefore: (node: unknown, referenceNode: unknown) => void;
+    firstChild: unknown;
+    outerHTML: string;
   };
 
   const { document, window: domWindow } = parseHTML(
