@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-- `main.ts` hosts the Hono app, HTML rendering, and Chart.js image generation.
+- `main.ts` hosts the Hono app, HTML rendering, and SVG placeholder generation.
 - `static/` contains browser assets (`app.js`, `favicon.svg`) served via
   `/static/*`.
 - `main_test.ts` includes Deno unit tests for HTTP endpoints.
@@ -14,10 +14,8 @@
 
 - `mise run dev`: start the dev server (wraps `deno task dev` with file
   watching).
-- `deno task dev`: run
-  `deno serve --watch --allow-net --allow-read --allow-ffi main.ts`.
-- `mise run test`: run Deno tests
-  (`deno test --allow-net --allow-read --allow-ffi`).
+- `deno task dev`: run `deno serve --watch --allow-net --allow-read main.ts`.
+- `mise run test`: run Deno tests (`deno test --allow-net --allow-read`).
 - `mise run e2e`: run Playwright against the UI and image endpoint
   (`npx playwright test`).
 - `mise run lint` / `mise run fmt`: lint and format with Deno tooling.
@@ -46,6 +44,6 @@
 
 ## Security & Configuration Tips
 
-- Server-side rendering requires `--allow-net`, `--allow-read`, and
-  `--allow-ffi` due to `npm:canvas`.
+- Server-side image generation uses SVG output and requires `--allow-net` and
+  `--allow-read`.
 - Ensure Node is installed and `npm install` has been run for Playwright tests.

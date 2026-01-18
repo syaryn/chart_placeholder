@@ -30,8 +30,8 @@ cd chart_placeholder
 # Install Playwright test runner
 npm install
 
-# Approve npm:canvas build scripts for server-side rendering
-deno install --allow-scripts=npm:canvas --entrypoint main.ts
+# Install Deno dependencies
+deno install --entrypoint main.ts
 ```
 
 ```sh
@@ -67,15 +67,14 @@ mise run fmt
 
 ## Deployment
 
-- Use `deno serve --allow-net --allow-read --allow-ffi main.ts` in production.
-- Ensure `npm:canvas` build scripts are approved and system dependencies are
-  available for server-side PNG rendering.
+- Use `deno serve --allow-net --allow-read main.ts` in production.
+- Server-side image generation outputs SVG and works on Deno Deploy.
 
 ## Built With
 
 - [Deno](https://deno.com/) - Runtime and tooling
 - [Hono](https://hono.dev/) - Web framework
-- [Chart.js](https://www.chartjs.org/) - Chart rendering
+- [Chartist.js](https://chartist-js.github.io/) - SVG chart rendering
 - [Pico CSS](https://picocss.com/) - Minimal CSS framework
 - [HTMX](https://htmx.org/) - HTML-driven interactions
 - [Alpine.js](https://alpinejs.dev/) - Lightweight UI state
@@ -91,5 +90,5 @@ MIT
 
 ## Acknowledgments
 
-- Chart.js and the community around it.
+- Chartist.js and the community around it.
 - Pico CSS and its minimal default styles.

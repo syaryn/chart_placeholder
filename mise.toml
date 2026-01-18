@@ -6,7 +6,7 @@ lefthook = "latest"
 run = "deno task dev"
 
 [tasks.test]
-run = "deno test --allow-net --allow-read --allow-ffi"
+run = "deno test --allow-net --allow-read"
 
 [tasks.e2e]
 run = "npx playwright test"

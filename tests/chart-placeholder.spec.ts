@@ -9,7 +9,6 @@ test("builds a chart image URL from form inputs", async ({ page }) => {
     .toBeVisible();
 
   await page.getByLabel("Chart type").selectOption("line");
-  await page.getByLabel("Title").fill("Monthly Active Users");
   await page.getByLabel("Labels (comma separated)").fill("Jan, Feb, Mar");
   await page.getByLabel("Values (comma separated)").fill("5, 9, 12");
 
@@ -18,7 +17,7 @@ test("builds a chart image URL from form inputs", async ({ page }) => {
 
   const imageUrl = await imageInput.inputValue();
   const response = await page.request.get(imageUrl);
-  expect(response.headers()["content-type"]).toContain("image/png");
+  expect(response.headers()["content-type"]).toContain("image/svg+xml");
   expect((await response.body()).length).toBeGreaterThan(1000);
 });
 
@@ -26,7 +25,7 @@ test("buttons have matching sizes", async ({ page }) => {
   await page.goto("/");
 
   const copyButton = page.getByRole("button", { name: "Copy URL" });
-  const downloadButton = page.getByRole("button", { name: "Download PNG" });
+  const downloadButton = page.getByRole("button", { name: "Download SVG" });
 
   await expect(copyButton).toBeVisible();
   await expect(downloadButton).toBeVisible();

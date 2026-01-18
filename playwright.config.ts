@@ -11,7 +11,7 @@ export default defineConfig({
   },
   webServer: {
     command:
-      "/home/takuma/.local/share/mise/installs/deno/2.6.5/bin/deno serve --allow-net --allow-read --allow-ffi main.ts",
+      "/home/takuma/.local/share/mise/installs/deno/2.6.5/bin/deno serve --allow-net --allow-read main.ts",
     url: "http://127.0.0.1:8000",
     reuseExistingServer: false,
     timeout: 30_000,

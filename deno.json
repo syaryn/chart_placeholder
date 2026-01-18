@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "deno serve --watch --allow-net --allow-read --allow-ffi main.ts"
+    "dev": "deno serve --watch --allow-net --allow-read main.ts"
   },
   "nodeModulesDir": "auto",
   "imports": {
@@ -8,7 +8,7 @@
     "@hono/hono/deno": "jsr:@hono/hono@^4/deno",
     "@sentry/deno": "npm:@sentry/deno@^8",
     "@std/assert": "jsr:@std/assert@^1",
-    "chart.js": "npm:chart.js@^4",
-    "canvas": "npm:canvas@^3"
+    "chartist": "npm:chartist@^1",
+    "linkedom": "npm:linkedom@^0.18"
   }
 }
