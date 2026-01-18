@@ -381,61 +381,96 @@ async function renderChartistSvg(options: {
 }): Promise<string> {
   const { type, labels, values, width, height, fillArea } = options;
 
+  type DomWindow = Window & {
+    Element?: typeof Element;
+    SVGElement?: typeof SVGElement;
+    Node?: typeof Node;
+    navigator?: Navigator;
+    devicePixelRatio?: number;
+    matchMedia?: (query: string) => {
+      matches: boolean;
+      media: string;
+      onchange: ((event: MediaQueryListEvent) => void) | null;
+      addListener: (listener: (event: MediaQueryListEvent) => void) => void;
+      removeListener: (listener: (event: MediaQueryListEvent) => void) => void;
+      addEventListener: (
+        type: "change",
+        listener: (event: MediaQueryListEvent) => void,
+      ) => void;
+      removeEventListener: (
+        type: "change",
+        listener: (event: MediaQueryListEvent) => void,
+      ) => void;
+      dispatchEvent: (event: Event) => boolean;
+    };
+    requestAnimationFrame?: (callback: (time: number) => void) => number;
+    cancelAnimationFrame?: (id: number) => void;
+    setTimeout?: typeof setTimeout;
+  };
+
   const { document, window: domWindow } = parseHTML(
     '<!doctype html><html><body><div id="chart"></div></body></html>',
-  );
-  const previousWindow = globalThis.window;
-  const previousDocument = globalThis.document;
-  const previousNavigator = globalThis.navigator;
-  const previousElement = globalThis.Element;
-  const previousSvgElement = globalThis.SVGElement;
-  const previousNode = globalThis.Node;
+  ) as { document: Document; window: DomWindow };
+  const globalScope = globalThis as unknown as {
+    window?: Window;
+    document?: Document;
+    navigator?: Navigator;
+    Element?: typeof Element;
+    SVGElement?: typeof SVGElement;
+    Node?: typeof Node;
+  };
+  const previousWindow = globalScope.window;
+  const previousDocument = globalScope.document;
+  const previousNavigator = globalScope.navigator;
+  const previousElement = globalScope.Element;
+  const previousSvgElement = globalScope.SVGElement;
+  const previousNode = globalScope.Node;
 
   const cleanupGlobals = () => {
     if (previousWindow === undefined) {
-      delete (globalThis as { window?: unknown }).window;
+      delete globalScope.window;
     } else {
-      globalThis.window = previousWindow;
+      globalScope.window = previousWindow;
     }
     if (previousDocument === undefined) {
-      delete (globalThis as { document?: unknown }).document;
+      delete globalScope.document;
     } else {
-      globalThis.document = previousDocument;
+      globalScope.document = previousDocument;
     }
     if (previousNavigator === undefined) {
-      delete (globalThis as { navigator?: unknown }).navigator;
+      delete globalScope.navigator;
     } else {
-      globalThis.navigator = previousNavigator;
+      globalScope.navigator = previousNavigator;
     }
     if (previousElement === undefined) {
-      delete (globalThis as { Element?: unknown }).Element;
+      delete globalScope.Element;
     } else {
-      globalThis.Element = previousElement;
+      globalScope.Element = previousElement;
     }
     if (previousSvgElement === undefined) {
-      delete (globalThis as { SVGElement?: unknown }).SVGElement;
+      delete globalScope.SVGElement;
     } else {
-      globalThis.SVGElement = previousSvgElement;
+      globalScope.SVGElement = previousSvgElement;
     }
     if (previousNode === undefined) {
-      delete (globalThis as { Node?: unknown }).Node;
+      delete globalScope.Node;
     } else {
-      globalThis.Node = previousNode;
+      globalScope.Node = previousNode;
     }
   };
 
-  globalThis.window = domWindow;
-  globalThis.document = document;
-  globalThis.navigator = domWindow.navigator ??
+  globalScope.window = domWindow;
+  globalScope.document = document;
+  globalScope.navigator = domWindow.navigator ??
     ({ userAgent: "deno" } as Navigator);
-  if (!globalThis.Element && domWindow.Element) {
-    globalThis.Element = domWindow.Element;
+  if (!globalScope.Element && domWindow.Element) {
+    globalScope.Element = domWindow.Element;
   }
-  if (!globalThis.SVGElement && domWindow.SVGElement) {
-    globalThis.SVGElement = domWindow.SVGElement;
+  if (!globalScope.SVGElement && domWindow.SVGElement) {
+    globalScope.SVGElement = domWindow.SVGElement;
   }
-  if (!globalThis.Node && domWindow.Node) {
-    globalThis.Node = domWindow.Node;
+  if (!globalScope.Node && domWindow.Node) {
+    globalScope.Node = domWindow.Node;
   }
   Object.defineProperty(domWindow, "devicePixelRatio", {
     value: 1,
@@ -454,7 +489,7 @@ async function renderChartistSvg(options: {
     });
   }
   if (!domWindow.requestAnimationFrame) {
-    domWindow.requestAnimationFrame = (callback: FrameRequestCallback) => {
+    domWindow.requestAnimationFrame = (callback: (time: number) => void) => {
       callback(0);
       return 0;
     };
