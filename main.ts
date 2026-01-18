@@ -270,6 +270,20 @@ function renderImage(query: Record<string, string>): Response {
     tension: 0.3,
   };
 
+  const plugins = {
+    legend: {
+      display: showLegend,
+    },
+    title: {
+      display: Boolean(title),
+      text: title,
+    },
+    customBackground: {
+      color: background,
+      alpha: backgroundOpacity,
+    },
+  } as Record<string, unknown>;
+
   const chart = new Chart(ctx, {
     type,
     data: {
@@ -279,19 +293,7 @@ function renderImage(query: Record<string, string>): Response {
     options: {
       responsive: false,
       animation: false,
-      plugins: {
-        legend: {
-          display: showLegend,
-        },
-        title: {
-          display: Boolean(title),
-          text: title,
-        },
-        customBackground: {
-          color: background,
-          alpha: backgroundOpacity,
-        },
-      },
+      plugins,
       scales: type === "pie" || type === "doughnut" ? {} : {
         y: {
           beginAtZero: true,
@@ -304,7 +306,7 @@ function renderImage(query: Record<string, string>): Response {
   const buffer = canvas.toBuffer("image/png");
   chart.destroy();
 
-  return new Response(buffer, {
+  return new Response(new Uint8Array(buffer), {
     headers: {
       "content-type": "image/png",
       "cache-control": "public, max-age=3600",
