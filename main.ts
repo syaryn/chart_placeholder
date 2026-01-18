@@ -12,10 +12,18 @@ Sentry.init({
     "https://aca76912cd8193affff31736ab6bc288@o4510418325864448.ingest.de.sentry.io/4510729022013520",
 });
 
-if (import.meta.main && Deno.env.get("SENTRY_TEST") === "1") {
-  setTimeout(() => {
-    throw new Error("Sentry test error");
-  }, 0);
+if (import.meta.main) {
+  let sentryTest: string | undefined;
+  try {
+    sentryTest = Deno.env.get("SENTRY_TEST");
+  } catch {
+    sentryTest = undefined;
+  }
+  if (sentryTest === "1") {
+    setTimeout(() => {
+      throw new Error("Sentry test error");
+    }, 0);
+  }
 }
 
 app.get("/static/*", serveStatic({ root: "./" }));
