@@ -1,0 +1,15 @@
+no_tty: true
+
+pre-commit:
+  commands:
+    fmt:
+      run: mise exec -- deno fmt --check
+    lint:
+      run: mise exec -- deno lint
+
+pre-push:
+  commands:
+    test:
+      run: mise run test
+    e2e:
+      run: mise run e2e

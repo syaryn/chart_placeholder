@@ -1,0 +1,18 @@
+[tools]
+deno = "latest"
+lefthook = "latest"
+
+[tasks.dev]
+run = "deno task dev"
+
+[tasks.test]
+run = "deno test --allow-net --allow-read --allow-ffi"
+
+[tasks.e2e]
+run = "npx playwright test"
+
+[tasks.lint]
+run = "deno lint"
+
+[tasks.fmt]
+run = "deno fmt"
