@@ -43,6 +43,13 @@ document.addEventListener("alpine:init", () => {
       this.aspectRatio = this.width / this.height;
       this.buildChart();
     },
+    withSpan(spanConfig, fn) {
+      const sentry = globalThis.Sentry;
+      if (sentry && typeof sentry.startSpan === "function") {
+        return sentry.startSpan(spanConfig, fn);
+      }
+      return fn();
+    },
     parseList(text) {
       return text
         .split(",")
@@ -175,36 +182,54 @@ document.addEventListener("alpine:init", () => {
       this.imageUrl = `${globalThis.location.origin}/?${params.toString()}`;
     },
     copyUrl() {
-      if (!this.imageUrl) {
-        this.copyStatus = "No URL to copy yet.";
-        return;
-      }
-      navigator.clipboard.writeText(this.imageUrl).catch(() => {
-        this.copyStatus = "Copy failed. Please select and copy manually.";
-      });
-      this.copyStatus = "Copied!";
-      clearTimeout(this._copyTimer);
-      this._copyTimer = setTimeout(() => {
-        this.copyStatus = "";
-      }, 2000);
+      this.withSpan(
+        { op: "ui.click", name: "Copy URL" },
+        () => {
+          if (!this.imageUrl) {
+            this.copyStatus = "No URL to copy yet.";
+            return;
+          }
+          navigator.clipboard.writeText(this.imageUrl).catch((error) => {
+            this.copyStatus = "Copy failed. Please select and copy manually.";
+            if (globalThis.Sentry) {
+              globalThis.Sentry.captureException(error);
+            }
+          });
+          this.copyStatus = "Copied!";
+          clearTimeout(this._copyTimer);
+          this._copyTimer = setTimeout(() => {
+            this.copyStatus = "";
+          }, 2000);
+        },
+      );
     },
     downloadPng() {
-      if (!this.imageUrl) {
-        return;
-      }
-      const link = document.createElement("a");
-      link.href = this.imageUrl;
-      link.download = "chart.png";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      this.withSpan(
+        { op: "ui.click", name: "Download PNG" },
+        () => {
+          if (!this.imageUrl) {
+            return;
+          }
+          const link = document.createElement("a");
+          link.href = this.imageUrl;
+          link.download = "chart.png";
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+        },
+      );
     },
     randomize() {
-      const values = this.parseNumbers(this.valuesText).map(() => {
-        return Math.floor(Math.random() * 20) + 2;
-      });
-      this.valuesText = values.join(", ");
-      this.buildChart();
+      this.withSpan(
+        { op: "ui.click", name: "Shuffle data" },
+        () => {
+          const values = this.parseNumbers(this.valuesText).map(() => {
+            return Math.floor(Math.random() * 20) + 2;
+          });
+          this.valuesText = values.join(", ");
+          this.buildChart();
+        },
+      );
     },
   }));
 });

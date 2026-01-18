@@ -1,10 +1,22 @@
 import { Hono } from "@hono/hono";
 import { serveStatic } from "@hono/hono/deno";
+import * as Sentry from "@sentry/deno";
 import { Chart, registerables } from "chart.js";
 import { createCanvas } from "canvas";
 
 const app = new Hono();
 const allowedTypes = new Set(["bar", "line", "pie", "doughnut"]);
+
+Sentry.init({
+  dsn:
+    "https://aca76912cd8193affff31736ab6bc288@o4510418325864448.ingest.de.sentry.io/4510729022013520",
+});
+
+if (import.meta.main && Deno.env.get("SENTRY_TEST") === "1") {
+  setTimeout(() => {
+    throw new Error("Sentry test error");
+  }, 0);
+}
 
 app.get("/static/*", serveStatic({ root: "./" }));
 
@@ -52,6 +64,21 @@ function renderPage(): string {
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@latest/css/pico.min.css"
     />
+    <script
+      src="https://js-de.sentry-cdn.com/aca76912cd8193affff31736ab6bc288.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      Sentry.onLoad(function () {
+        Sentry.init({
+          // Tracing
+          tracesSampleRate: 1.0,
+          // Session Replay
+          replaysSessionSampleRate: 0.1,
+          replaysOnErrorSampleRate: 1.0,
+        });
+      });
+    </script>
     <script src="https://unpkg.com/htmx.org@latest"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@latest"></script>
     <script defer src="/static/app.js"></script>
