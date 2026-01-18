@@ -381,25 +381,25 @@ async function renderChartistSvg(options: {
 }): Promise<string> {
   const { type, labels, values, width, height, fillArea } = options;
 
-  type DomWindow = Window & {
-    Element?: typeof Element;
-    SVGElement?: typeof SVGElement;
-    Node?: typeof Node;
-    navigator?: Navigator;
+  type DomWindow = {
+    Element?: unknown;
+    SVGElement?: unknown;
+    Node?: unknown;
+    navigator?: unknown;
     devicePixelRatio?: number;
     matchMedia?: (query: string) => {
       matches: boolean;
       media: string;
-      onchange: ((event: MediaQueryListEvent) => void) | null;
-      addListener: (listener: (event: MediaQueryListEvent) => void) => void;
-      removeListener: (listener: (event: MediaQueryListEvent) => void) => void;
+      onchange: ((event: Event) => void) | null;
+      addListener: (listener: (event: Event) => void) => void;
+      removeListener: (listener: (event: Event) => void) => void;
       addEventListener: (
         type: "change",
-        listener: (event: MediaQueryListEvent) => void,
+        listener: (event: Event) => void,
       ) => void;
       removeEventListener: (
         type: "change",
-        listener: (event: MediaQueryListEvent) => void,
+        listener: (event: Event) => void,
       ) => void;
       dispatchEvent: (event: Event) => boolean;
     };
@@ -410,14 +410,14 @@ async function renderChartistSvg(options: {
 
   const { document, window: domWindow } = parseHTML(
     '<!doctype html><html><body><div id="chart"></div></body></html>',
-  ) as { document: Document; window: DomWindow };
+  ) as unknown as { document: unknown; window: DomWindow };
   const globalScope = globalThis as unknown as {
-    window?: Window;
-    document?: Document;
-    navigator?: Navigator;
-    Element?: typeof Element;
-    SVGElement?: typeof SVGElement;
-    Node?: typeof Node;
+    window?: unknown;
+    document?: unknown;
+    navigator?: unknown;
+    Element?: unknown;
+    SVGElement?: unknown;
+    Node?: unknown;
   };
   const previousWindow = globalScope.window;
   const previousDocument = globalScope.document;
@@ -461,8 +461,9 @@ async function renderChartistSvg(options: {
 
   globalScope.window = domWindow;
   globalScope.document = document;
-  globalScope.navigator = domWindow.navigator ??
-    ({ userAgent: "deno" } as Navigator);
+  globalScope.navigator = domWindow.navigator ?? ({ userAgent: "deno" } as {
+    userAgent: string;
+  });
   if (!globalScope.Element && domWindow.Element) {
     globalScope.Element = domWindow.Element;
   }
@@ -497,7 +498,7 @@ async function renderChartistSvg(options: {
   }
 
   try {
-    const container = document.getElementById("chart");
+    const container = (document as Document).getElementById("chart");
     if (!container) {
       return "";
     }
@@ -542,7 +543,7 @@ async function renderChartistSvg(options: {
 
     const delay = domWindow.setTimeout ?? setTimeout;
     await new Promise((resolve) => delay(resolve, 0));
-    const svg = container.querySelector("svg");
+    const svg = container.querySelector("svg") as SVGElement | null;
     if (!svg) {
       return "";
     }
