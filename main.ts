@@ -408,9 +408,24 @@ async function renderChartistSvg(options: {
     setTimeout?: typeof setTimeout;
   };
 
+  type Document = {
+    getElementById: (id: string) => {
+      querySelector: (selector: string) => {
+        getAttribute: (name: string) => string | null;
+        setAttribute: (name: string, value: string) => void;
+        insertBefore: (node: unknown, referenceNode: unknown) => void;
+        firstChild: unknown;
+      } | null;
+    } | null;
+    createElementNS: (ns: string, tagName: string) => {
+      setAttribute: (name: string, value: string) => void;
+      textContent: string | null;
+    };
+  };
+
   const { document, window: domWindow } = parseHTML(
     '<!doctype html><html><body><div id="chart"></div></body></html>',
-  ) as unknown as { document: unknown; window: DomWindow };
+  ) as unknown as { document: Document; window: DomWindow };
   const globalScope = globalThis as unknown as {
     window?: unknown;
     document?: unknown;
@@ -498,7 +513,7 @@ async function renderChartistSvg(options: {
   }
 
   try {
-    const container = (document as Document).getElementById("chart");
+    const container = document.getElementById("chart");
     if (!container) {
       return "";
     }
@@ -543,7 +558,7 @@ async function renderChartistSvg(options: {
 
     const delay = domWindow.setTimeout ?? setTimeout;
     await new Promise((resolve) => delay(resolve, 0));
-    const svg = container.querySelector("svg") as SVGElement | null;
+    const svg = container.querySelector("svg");
     if (!svg) {
       return "";
     }
