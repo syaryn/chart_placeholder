@@ -5,6 +5,7 @@
     "jsr:@std/assert@1": "1.0.16",
     "jsr:@std/internal@^1.0.12": "1.0.12",
     "npm:@playwright/test@^1.57.0": "1.57.0",
+    "npm:@sentry/deno@8": "8.55.0",
     "npm:canvas@3": "3.2.1",
     "npm:chart.js@4": "4.5.1"
   },
@@ -32,6 +33,15 @@
         "playwright"
       ],
       "bin": true
+    },
+    "@sentry/core@8.55.0": {
+      "integrity": "sha512-6g7jpbefjHYs821Z+EBJ8r4Z7LT5h80YSWRJaylGS4nW5W5Z2KXzpdnyFarv37O7QjauzVC2E+PABmpkw5/JGA=="
+    },
+    "@sentry/deno@8.55.0": {
+      "integrity": "sha512-BwV2zp3UZM/hxXlLaVIP2PNjbpOnSoGj4DftlWIcwS9IyFb/WX/MBntR4GoxgbPg1GJTsKDZpvSPpK3HSbzeVw==",
+      "dependencies": [
+        "@sentry/core"
+      ]
     },
     "base64-js@1.5.1": {
       "integrity": "sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA=="
@@ -256,6 +266,7 @@
     "dependencies": [
       "jsr:@hono/hono@4",
       "jsr:@std/assert@1",
+      "npm:@sentry/deno@8",
       "npm:canvas@3",
       "npm:chart.js@4"
     ],
